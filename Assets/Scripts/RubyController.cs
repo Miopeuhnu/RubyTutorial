@@ -7,6 +7,8 @@ public class RubyController : MonoBehaviour
     //movement variables
     Rigidbody2D rigidbody2d;
 
+    public GameObject projectilePrefab;
+
     float horizontal;
     float vertical;
 
@@ -42,6 +44,7 @@ public class RubyController : MonoBehaviour
         horizontal = Input.GetAxis("Horizontal");
         vertical = Input.GetAxis("Vertical");
 
+            //Animator 
         Vector2 move = new Vector2(horizontal, vertical);
 
         if(!Mathf.Approximately(move.x, 0.0f) || !Mathf.Approximately(0.0f,move.y))
@@ -49,15 +52,19 @@ public class RubyController : MonoBehaviour
             lookDirection.Set(move.x, move.y);
             lookDirection.Normalize();
         }
-
+       
         animator.SetFloat("Look X", lookDirection.x);
         animator.SetFloat("Look Y", lookDirection.y);
         animator.SetFloat("Speed", move.magnitude);
 
-
+            //Launch Projectile
+        if (Input.GetKeyDown(KeyCode.C))
+        {
+            Launch();
+        }
         //Debug.Log(vertical);
         //Debug.Log(horizontal);
-        if (isInvincible)
+            if (isInvincible)
         {
             invincibleTimer -= Time.deltaTime;
             if (invincibleTimer < 0)
@@ -88,4 +95,18 @@ public class RubyController : MonoBehaviour
         animator.SetTrigger("Hit");
         Debug.Log(currentHealth + "/" + maxHealth);
     }
+    void Launch()
+    {
+        GameObject projectileObject = Instantiate(projectilePrefab, rigidbody2d.position + Vector2.up * 0.5f, Quaternion.identity);
+
+        Projectile projectile = projectileObject.GetComponent<Projectile>();
+        projectile.Launch(lookDirection, 300);
+
+        animator.SetTrigger("Launch");
+    }
+    
+       
+
+   
+       
 }
